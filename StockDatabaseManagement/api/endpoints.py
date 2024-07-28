@@ -1,24 +1,19 @@
-from flask import Flask, jsonify, request
-from db.utilities import connect_to_database
-from services.stock_data_services import fetch_ticket_data
-import json
-
+from flask import Flask, request, jsonify
+from db.utilities import update_stock_data  # Assuming this function exists
+from services.stock_data_services import fetch_ticker_data
 app = Flask(__name__)
 
-@app.route('/api/stockdata', methods=['GET'])
-def get_stock_data():
-    ticker = request.args.get('ticker')
-    if not ticker:
-        return jsonify({'error': 'Ticker is required'}), 400
-    
-    data = fetch_ticket_data(ticker)
-    if data is None or data.empty:
-        return jsonify({'error': 'No data found for ticker'}), 404
+@app.route('/update/<ticker>', methods=['POST'])
+def update_data(ticker):
+    """Endpoint to trigger stock data update for a specific ticker."""
+    response = update_stock_data(ticker)
+    return jsonify(response)
 
-    # Convert data to JSON
-    result = data.to_json(orient='records')
-    parsed = json.loads(result)
-    return jsonify(parsed)
+@app.route('/fetch/<ticker>', methods=['GET'])
+def fetch_data(ticker):
+    """Endpoint to fetch stock data for a specific ticker."""
+    data = fetch_ticker_data(ticker)
+    return jsonify(data)
 
 if __name__ == '__main__':
     app.run(debug=True)
