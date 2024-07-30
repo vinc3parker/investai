@@ -1,6 +1,7 @@
 import mysql.connector
 import datetime
 import pandas_market_calendars as mcal
+from services.data_preparation import prepare_data_for_insert
 
 # Checks if table exists
 def table_exists(connection, table_name):
@@ -11,14 +12,18 @@ def table_exists(connection, table_name):
     return result is not None
 
 # Fetches ticker data from relevant ticket table
-def fetch_ticker_data(connection, table_name):
+def fetch_ticker_data(connection, ticker):
     cursor = connection.cursor()
-    query = f"SELECT * FROM {table_name};"
-    cursor.execute(query)
-    data = cursor.fetchall()
-    cursor.close()
-    # Convert the result into a more manageable format if necessary
-    return data
+    try:
+        query = f"SELECT * FROM `{ticker}`"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result
+    except mysql.connector.Error as err:
+        print(f"Error fetching data from the database for ticker {ticker}: {err}")
+        return []
+    finally:
+        cursor.close()
 
 # Creates a table for the a ticker
 def create_table(connection, table_name):
@@ -40,16 +45,20 @@ def create_table(connection, table_name):
 
 # Adding data to a table
 def insert_data_into_table(connection, table_name, data):
+    """Insert data from a pandas DataFrame into the specified table."""
     cursor = connection.cursor()
-    for record in data:
-        query = f"""
-        INSERT INTO {table_name} (date, open, high, low, close, volume)
-        VALUES (%s, %s, %s, %s, %s, %s);
-        """
-        cursor.execute(query, record)  # record should be a tuple (date, open, high, low, close, volume)
-    connection.commit()
-    cursor.close()
-    print(f"Data inserted into {table_name} successfully.")
+    try:
+        for index, row in data.iterrows():
+            sql = f"INSERT INTO {table_name} (date, open, high, low, close, volume) VALUES (%s, %s, %s, %s, %s, %s)"
+            values = (row['date'], row['open'], row['high'], row['low'], row['close'], row['volume'])
+            cursor.execute(sql, values)
+        connection.commit()
+        print("Data inserted successfully.")
+    except mysql.connector.Error as e:
+        print(f"Error inserting data: {e}")
+        connection.rollback()
+    finally:
+        cursor.close()
 
 # Checks if the date is a trading day
 def is_trading_day(date):

@@ -1,33 +1,25 @@
-# services/stock_data_service.py
-import yfinance as yf
-from db.connection import connect_to_database
-from db.utilities import table_exists, fetch_ticker_data, create_table, insert_data_into_table
+import pandas as pd
 
-def get_or_fetch_ticker_data(ticker):
-    connection = connect_to_database()
-    if not connection:
-        print("Failed to connect to the database.")
-        return
+def prepare_data_for_insert(data):
+    """
+    Adjusts yfinance data to fit into a MySQL database by normalizing date formats
+    and filtering columns while keeping the data in a DataFrame format.
 
-    try:
-        if table_exists(connection, ticker):
-            data = fetch_ticker_data(connection, ticker)
-            if data.empty:
-                print("No data found in the table. Fetching new data...")
-                data = fetch_data_from_yfinance(ticker)
-                insert_data_into_table(connection, ticker, data)
-        else:
-            print(f"Table for {ticker} does not exist. Fetching and creating...")
-            create_table(connection, ticker)
-            data = fetch_data_from_yfinance(ticker)
-            insert_data_into_table(connection, ticker, data)
+    Args:
+        data (DataFrame): The stock data fetched from yfinance.
 
-        return data
-    finally:
-        if connection:
-            connection.close()
+    Returns:
+        DataFrame: Data formatted and ready for database operations.
+    """
 
-def fetch_data_from_yfinance(ticker):
-    stock = yf.Ticker(ticker)
-    data = stock.history(period="1mo")  # Fetch data for the last month
+    # Reset the index to make 'Date' a column and remove timezone (normalize to midnight)
+    data.reset_index(inplace=True)
+    data['Date'] = data['Date'].dt.tz_localize(None).dt.normalize()
+
+    # Select only the necessary columns
+    data = data[['Date', 'Open', 'High', 'Low', 'Close', 'Volume']]
+
+    # Optionally, rename columns to match your MySQL table's column names if they are different
+    data.columns = ['date', 'open', 'high', 'low', 'close', 'volume']
+
     return data
