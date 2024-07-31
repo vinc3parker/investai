@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from services.stock_data_services import get_or_fetch_ticker_data
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/fetch/<ticker>', methods=['GET'])
 def fetch_data(ticker):

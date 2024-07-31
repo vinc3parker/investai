@@ -5,7 +5,7 @@ from django.shortcuts import render
 def home(request):
     return render(request, 'home.html')
 
-def about(request):
+def stocks(request):
     # URL of the Database Flask API
     ticker = 'aapl'
     url = f"http://127.0.0.1:5000/fetch/{ticker}"
@@ -18,7 +18,7 @@ def about(request):
         data = None
     
     # Render teh response data in a Django template
-    return render(request, 'about.html', {'data': data})
+    return render(request, 'stocks.html', {'data': data})
 
 def performance(request):
     return render(request, 'performance.html')

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Stocks{% endblock %}
+
+{% block extra_js %}
+{% load static %}
+<script src="{% static 'js/stock_charts.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+    <div class="stock-container">
+        <h2>Check Stock Data</h2>
+        <p>Find information on stocks</p>
+        <canvas id="stockChart" width="800" height="400"></canvas>
+    </div>
+{% endblock %}
