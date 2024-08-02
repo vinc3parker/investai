@@ -7,11 +7,16 @@
     <meta name="description" content="New start-up hedgefund that uses the power of AI for financial forcasting">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
     {% block extra_css %}{% endblock %}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Include date-fns library -->
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.16.1/dist/date-fns.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@^3"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
-    <script src="https://cdn.jsdelivr.net/npm/charjs-adapter-date-fns>"></script>
+    <!-- Include the Chart.js date-fns adapter -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     {% block extra_js %} {% endblock %}
     <!-- Load JS files if needed -->
 </head>
