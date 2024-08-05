@@ -1,2 +1,2 @@
 # investai
-Hudgefund development powered with AI
+AI powered investment fund development
