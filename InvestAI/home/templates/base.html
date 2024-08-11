@@ -1,24 +1,14 @@
 <!DOCTYPE html>
 <html class="no-js">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>InvestAI | {% block title %} - {{ block.super }}{% endblock %}</title>
-    <meta name="description" content="New start-up hedgefund that uses the power of AI for financial forcasting">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Website{% endblock %}</title>
     {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
-    {% block extra_css %}{% endblock %}
-    <!-- Include Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Include date-fns library -->
-    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.16.1/dist/date-fns.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@^3"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
-    <!-- Include the Chart.js date-fns adapter -->
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-    {% block extra_js %} {% endblock %}
-    <!-- Load JS files if needed -->
+    <link rel="icon" href="{% static 'images/favicon.png' %}" type="image/x-icon">
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_head %}{% endblock %}
 </head>
 <body>    
     <header>
@@ -48,5 +38,8 @@
     <footer>
         <p>&copy; 2024 InvestAI</p>
     </footer>
+
+{% block extra_scripts %}{% endblock %}
+<script src="{% static 'js/styling.js' %}" type="module"></script>
 </body>
 </html>

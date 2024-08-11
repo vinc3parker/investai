@@ -1,5 +1,3 @@
-/* home/static/styles.css */
-
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -64,4 +62,114 @@ footer {
     position: absolute;
     bottom: 0;
     width: 100%;
+}
+
+/* Hero Banner */
+.hero-banner {
+    background-image: url('/static/images/hero-banner.jpg'); /* Placeholder for your banner image */
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 100px 20px;
+    text-align: center;
+}
+
+.hero-content h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.hero-content p {
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+.cta-button {
+    background-color: #ff6600;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+    background-color: #cc5200;
+}
+
+/* About Section */
+.about-section {
+    padding: 50px 20px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.about-section h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.about-section p {
+    font-size: 18px;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Features Section */
+.features-section {
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.features-section h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.feature-item {
+    background-color: #fff;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+    display: inline-block;
+}
+
+.feature-item h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.feature-item p {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* CTA Section */
+.cta-section {
+    background-color: #ff6600;
+    color: white;
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.cta-section h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.cta-section p {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.cta-section .cta-button {
+    background-color: white;
+    color: #ff6600;
+}
+
+.cta-section .cta-button:hover {
+    background-color: #f2f2f2;
 }

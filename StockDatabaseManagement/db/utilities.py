@@ -3,6 +3,21 @@ import datetime
 import pandas_market_calendars as mcal
 from services.data_preparation import prepare_data_for_insert
 
+# Create ticket table
+def create_ticker_table(connection):
+    cursor = connection.cursor()
+    create_statement = """
+    CREATE TABLE IF NOT EXISTS StockTickers (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        ticker VARCHAR(10) UNIQUE NOT NULL,
+        create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    """
+    cursor.execute(create_statement)
+    connection.commit()
+    cursor.close()
+    print("StockTikers table created successfully.")
+
 # Checks if table exists
 def table_exists(connection, table_name):
     cursor = connection.cursor()
@@ -29,7 +44,7 @@ def fetch_ticker_data(connection, ticker):
 def create_table(connection, table_name):
     cursor = connection.cursor()
     create_statement = f"""
-    CREATE TABLE IF NOT EXISTS {table_name} (
+    CREATE TABLE IF NOT EXISTS `{table_name}` (
         date DATE,
         open FLOAT,
         high FLOAT,
@@ -99,5 +114,70 @@ def data_up_to_date(connection, table_name):
     except mysql.connector.Error as err:
         print(f"Error checking if data is up to date in {table_name}: {err}")
         return False
+    finally:
+        cursor.close()
+
+def create_ticker_table(connection):
+    cursor = connection.cursor()
+    create_statement = """
+    CREATE TABLE IF NOT EXISTS StockTickers (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        ticker VARCHAR(50) UNIQUE NOT NULL,  # Increased from VARCHAR(10) to VARCHAR(50)
+        create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    """
+    cursor.execute(create_statement)
+    connection.commit()
+    cursor.close()
+    print("StockTickers table created successfully.")
+
+
+def get_all_tickers(connection):
+    """Fetch all ticker symbols from the StockTickers table."""
+    cursor = connection.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT ticker FROM StockTickers")
+        tickers = cursor.fetchall()
+        if tickers:
+            return [ticker['ticker'] for ticker in tickers]
+        else:
+            print("No tickers found in the StockTickers table.")
+            return []
+    except mysql.connector.Error as err:
+        print(f"Error fetching tickers from the StockTickers table: {err}")
+        return []
+    finally:
+        cursor.close()
+
+def update_ticker_table(connection):
+    exclusion_list = ['StockTickers', 'run']
+    """Update the StockTickers table with all existing table names in the database, excluding those in exclusion_list."""
+    cursor = connection.cursor()
+    try:
+        # Ensure the StockTickers table exists
+        create_ticker_table(connection)
+
+        # Get all table names in the database except the StockTickers table
+        cursor.execute("SHOW TABLES")
+        all_tables = cursor.fetchall()
+
+        # Convert list of tuples to a flat list of table names
+        all_tables = [table[0] for table in all_tables if table[0] not in exclusion_list]
+
+        for table_name in all_tables:
+            # Check if the table name is already in the StockTickers table
+            cursor.execute("SELECT ticker FROM StockTickers WHERE ticker = %s", (table_name,))
+            result = cursor.fetchone()
+
+            if not result:
+                # If the ticker is not found in StockTickers, insert it
+                cursor.execute("INSERT INTO StockTickers (ticker) VALUES (%s)", (table_name,))
+                connection.commit()
+                print(f"Ticker {table_name} added to the StockTickers table.")
+
+        print("Ticker table update complete.")
+        
+    except mysql.connector.Error as err:
+        print(f"Error updating the ticker table: {err}")
     finally:
         cursor.close()

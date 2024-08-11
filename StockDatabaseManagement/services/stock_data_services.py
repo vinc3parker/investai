@@ -27,11 +27,16 @@ def get_or_fetch_ticker_data(ticker):
                 print("Data is up to date.")
                 data = fetch_data(connection, ticker)
         return data
+    except mysql.connector.Error as err:
+        print(f"Error with ticker {ticker}: {err}")
+        return None
     finally:
         connection.close()
 
+
 def fetch_data_from_yfinance(ticker):
     """Fetches data from yfinance for the given ticker."""
+    ticker = ticker.replace('.', '-')
     stock = yf.Ticker(ticker)
     # Here you might customize the period and interval
     data = stock.history(period="1mo")  # Fetch data for the last month
@@ -54,3 +59,43 @@ def fetch_data(connection, ticker):
     else:
         print(f"No data found for {ticker}.")
         return pd.DataFrame()  # Return an empty DataFrame if no data is found
+
+
+def get_all_tickers():
+    """Fetch all ticker labels from the StockTickers table."""
+    connection = connect_to_database()
+    if not connection:
+        print("Failed to connect to the database.")
+        return None
+
+    try:
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute("SELECT ticker FROM StockTickers")
+        tickers = cursor.fetchall()
+        cursor.close()
+        
+        if tickers:
+            print("Fetched all tickers successfully.")
+            return [ticker['ticker'] for ticker in tickers]
+        else:
+            print("No tickers found.")
+            return []
+
+    finally:
+        connection.close()
+
+def fetch_sp500_tickers():
+    """Fetch the list of S&P 500 tickers from an online source."""
+    url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
+    tables = pd.read_html(url)
+    sp500_table = tables[0]
+    sp500_tickers = sp500_table['Symbol'].tolist()
+    return sp500_tickers
+
+def populate_database_with_sp500():
+    """Fetch and store data for all S&P 500 tickers."""
+    sp500_tickers = fetch_sp500_tickers()
+    for ticker in sp500_tickers:
+        print(f"Processing {ticker}...")
+        get_or_fetch_ticker_data(ticker)
+    print("Database population complete.")
