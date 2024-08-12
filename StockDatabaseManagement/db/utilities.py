@@ -41,8 +41,9 @@ def fetch_ticker_data(connection, ticker):
         cursor.close()
 
 # Creates a table for the a ticker
-def create_table(connection, table_name):
+def create_table(connection, ticker):
     cursor = connection.cursor()
+    table_name = f"stock_{ticker}"
     create_statement = f"""
     CREATE TABLE IF NOT EXISTS `{table_name}` (
         date DATE,
@@ -133,18 +134,18 @@ def create_ticker_table(connection):
 
 
 def get_all_tickers(connection):
-    """Fetch all ticker symbols from the StockTickers table."""
+    """Fetch all ticker symbols from the stockTickers_sp500 table."""
     cursor = connection.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT ticker FROM StockTickers")
+        cursor.execute("SELECT ticker FROM stockTickers_sp500")
         tickers = cursor.fetchall()
         if tickers:
             return [ticker['ticker'] for ticker in tickers]
         else:
-            print("No tickers found in the StockTickers table.")
+            print("No tickers found in the stockTickers_sp500 table.")
             return []
     except mysql.connector.Error as err:
-        print(f"Error fetching tickers from the StockTickers table: {err}")
+        print(f"Error fetching tickers from the stockTickers_sp500 table: {err}")
         return []
     finally:
         cursor.close()
@@ -179,5 +180,67 @@ def update_ticker_table(connection):
         
     except mysql.connector.Error as err:
         print(f"Error updating the ticker table: {err}")
+    finally:
+        cursor.close()
+
+def drop_all_tables(connection):
+    """Drops all tables in the database."""
+    cursor = connection.cursor()
+    try:
+        # Fetch all table names
+        cursor.execute("SHOW TABLES")
+        tables = cursor.fetchall()
+
+        # Drop each table
+        for (table_name,) in tables:
+            print(f"Dropping table {table_name}...")
+            cursor.execute(f"DROP TABLE IF EXISTS `{table_name}`")
+        
+        connection.commit()
+        print("All tables dropped successfully.")
+    except mysql.connector.Error as e:
+        print(f"Error dropping tables: {e}")
+    finally:
+        cursor.close()
+
+def drop_table(connection, table_name):
+    cursor = connection.cursor()
+    try:
+        cursor.execute(f"DROP TABLE IF EXISTS `{table_name}`")
+        connection.commit()
+        print(f"Table {table_name} dropped successfullly.")
+    except mysql.connector.Error as e:
+        print(f"Error dropping table {table_name}: {e}")
+    finally:
+        cursor.close()
+
+def remove_ticker_from_table(connection, ticker):
+    """Removes the ticker entry from stockTickers_sp500 table for now"""
+    cursor = connection.cursor()
+    try:
+        cursor.execute("DELETE FROM stockTickers_sp500 WHERE ticker = %s", (ticker,))
+        connection.commit()
+        print(f"Ticker {ticker} remove from stockTickers_sp500.")
+    except mysql.connector.Error as e:
+        print(f"Error removing ticker {ticker}: {e}")
+    finally: 
+        cursor.close()
+
+def create_stock_tickers_table(connection):
+    """Creates the stockTickers_sp500 table."""
+    cursor = connection.cursor()
+    try:
+        create_statement = """
+        CREATE TABLE IF NOT EXISTS `stockTickers_sp500` (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            ticker VARCHAR(10) UNIQUE NOT NULL,
+            full_name VARCHAR(255) UNIQUE NOT NULL
+        );
+        """
+        cursor.execute(create_statement)
+        connection.commit()
+        print("stockTickers_sp500 table created successfully.")
+    except mysql.connector.Error as e:
+        print(f"Error creating stockTickers_sp500 table: {e}")
     finally:
         cursor.close()

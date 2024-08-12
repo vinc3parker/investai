@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from services.stock_data_services import get_or_fetch_ticker_data, get_all_tickers
+from services.stock_data_services import get_or_fetch_ticker_data, get_ticker_list
 
 
 app = Flask(__name__)
@@ -17,7 +17,7 @@ def fetch_data(ticker):
 
 @app.route('/tickers', methods=['GET'])
 def tickers():
-    tickers = get_all_tickers()
+    tickers = get_ticker_list()
     if tickers is not None:
         return jsonify(tickers)
     else:

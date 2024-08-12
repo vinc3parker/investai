@@ -10,16 +10,21 @@ def prepare_data_for_insert(data):
 
     Returns:
         DataFrame: Data formatted and ready for database operations.
+        If an error occurs, returns an empty DataFrame.
     """
+    try:
+        # Reset the index to make 'Date' a column and remove timezone (normalize to midnight)
+        data.reset_index(inplace=True)
+        data['Date'] = data['Date'].dt.tz_localize(None).dt.normalize()
 
-    # Reset the index to make 'Date' a column and remove timezone (normalize to midnight)
-    data.reset_index(inplace=True)
-    data['Date'] = data['Date'].dt.tz_localize(None).dt.normalize()
+        # Select only the necessary columns
+        data = data[['Date', 'Open', 'High', 'Low', 'Close', 'Volume']]
 
-    # Select only the necessary columns
-    data = data[['Date', 'Open', 'High', 'Low', 'Close', 'Volume']]
+        # Optionally, rename columns to match your MySQL table's column names if they are different
+        data.columns = ['date', 'open', 'high', 'low', 'close', 'volume']
 
-    # Optionally, rename columns to match your MySQL table's column names if they are different
-    data.columns = ['date', 'open', 'high', 'low', 'close', 'volume']
-
-    return data
+        return data
+    except Exception as e:
+        print(f"Error in preparing data for insert: {e}")
+        # Return an empty DataFrame with the expected columns if there's an error
+        return pd.DataFrame(columns=['date', 'open', 'high', 'low', 'close', 'volume'])
