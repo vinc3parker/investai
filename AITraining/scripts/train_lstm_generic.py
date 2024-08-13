@@ -2,17 +2,19 @@ import os
 import pandas as pd
 import numpy as np
 from keras.models import Sequential # type: ignore
-from keras.layers import LSTM, Dense, Dropout # type: ignore
+from keras.layers import LSTM, Dense, Dropout, Input # type: ignore
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 import joblib
 import requests
+import random
 
-def load_and_aggregate_data(tickers):
+def load_and_aggregate_data(tickers, sample_size=10):
     """Load and aggregate data from multiple tickers into a single DataFrame."""
+    sampled_tickers = random.sample(tickers, sample_size)
     all_data = []
-    for ticker in tickers:
+    for ticker in sampled_tickers:
         file_path = f"data/prepared_training/{ticker}.csv"
         data = pd.read_csv(file_path, parse_dates=['date'])
         data['ticker'] = ticker
@@ -43,7 +45,8 @@ def preprocess_data(X_train, X_val):
 def create_lstm_model(input_shape):
     """Create a more complex LSTM model."""
     model = Sequential()
-    model.add(LSTM(units=50, return_sequences=True, input_shape=input_shape))
+    model.add(Input(shape=input_shape))
+    model.add(LSTM(units=50, return_sequences=True))
     model.add(Dropout(0.2))
     model.add(LSTM(units=50, return_sequences=False))
     model.add(Dropout(0.2))
@@ -94,36 +97,47 @@ def save_model(model, scaler):
     
     print(f"Generic model and scaler saved to {model_dir}.")
 
-def main(tickers):
-    # Load and aggregate data from multiple tickers
-    combined_data = load_and_aggregate_data(tickers)
+def train_generic_model(tickers, epochs=10, sample_size=10, batch_size=32):
+    """Train the LSTM model using a rotating set of tickers."""
+    model_initialized = False
+
+    for epoch in range(epochs):
+        print(f"Epoch {epoch + 1}/{epochs}")
+        
+        # Load and aggregate data from a random sample of tickers
+        combined_data = load_and_aggregate_data(tickers, sample_size=sample_size)
+        
+        # Split the aggregated data
+        X_train, X_val, y_train, y_val = split_data(combined_data)
+        
+        # Preprocess the data
+        X_train_scaled, X_val_scaled, scaler = preprocess_data(X_train, X_val)
+        
+        # Reshape data for LSTM
+        X_train_lstm = reshape_for_lstm(X_train_scaled)
+        X_val_lstm = reshape_for_lstm(X_val_scaled)
+        
+        # Adjust y_train and y_val for the LSTM reshaping
+        y_train_lstm = y_train[60:]
+        y_val_lstm = y_val[60:]
+        
+        # Create and train the model (initialize only once)
+        if not model_initialized:
+            model = create_lstm_model((X_train_lstm.shape[1], X_train_lstm.shape[2]))
+            model_initialized = True
+        
+        # Train the model using model.fit instead of manual batch training
+        model.fit(X_train_lstm, y_train_lstm, batch_size=batch_size, epochs=1, verbose=1, shuffle=False)
+        
+        # Evaluate the model after each epoch
+        evaluate_model(model, X_val_lstm, y_val_lstm)
     
-    # Split the aggregated data
-    X_train, X_val, y_train, y_val = split_data(combined_data)
-    
-    # Preprocess the data
-    X_train_scaled, X_val_scaled, scaler = preprocess_data(X_train, X_val)
-    
-    # Reshape data for LSTM
-    X_train_lstm = reshape_for_lstm(X_train_scaled)
-    X_val_lstm = reshape_for_lstm(X_val_scaled)
-    
-    # Adjust y_train and y_val for the LSTM reshaping
-    y_train_lstm = y_train[60:]
-    y_val_lstm = y_val[60:]
-    
-    # Create and train the model
-    model = create_lstm_model((X_train_lstm.shape[1], X_train_lstm.shape[2]))
-    model = batch_train_model(model, X_train_lstm, y_train_lstm)
-    
-    # Evaluate the model
-    evaluate_model(model, X_val_lstm, y_val_lstm)
-    
-    # Save the model and scaler
+    # Save the model and scaler after training
     save_model(model, scaler)
+
 
 if __name__ == "__main__":
     url = f"http://127.0.0.1:5000/tickers"
     response = requests.get(url)
     tickers = response.json()
-    main(tickers)
+    train_generic_model(tickers)
