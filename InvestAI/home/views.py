@@ -18,6 +18,12 @@ def fetch_stock_data(request, ticker):
     data = response.json()
     return JsonResponse(data, safe=False)
 
+def get_stock_prediction(request, ticker):
+    url = f"http://127.0.0.1:5002/predict/{ticker}"
+    response = requests.get(url)
+    data = response.json()
+    return JsonResponse(data, safe=False)
+
 def stocks(request):
     return render(request, 'stocks.html')
 

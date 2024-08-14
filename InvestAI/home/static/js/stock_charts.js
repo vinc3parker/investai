@@ -67,14 +67,38 @@ async function createChart(selectedTicker) {
     chart.data.datasets[0].data = data;
     chart.update();
   }
-}
 
-// Function to update the chart with the selected time range
-function updateChartWithRange(range) {
-    const selectedTicker = document.getElementById('ticker-select').value;
-    if (selectedTicker) {
-        createChart(selectedTicker, range);
-    }
+  // Fetch current stock value (assuming the last item in the data array is the current value)
+  const currentValue = data[data.length - 1].c;
+  document.getElementById("current-value").textContent = currentValue;
+
+  // Fetch predicted value from the backend
+  const predictionResponse = await fetch(`/api/predict/${selectedTicker}/`);
+  const predictionData = await predictionResponse.json();
+  const predictedValue = predictionData.predicted_value;
+
+  if (predictedValue !== null) {
+    document.getElementById("predicted-value").textContent = predictedValue;
+
+    // Calculate the expected change
+    const expectedChange = predictedValue - currentValue;
+    document.getElementById("expected-change").textContent = expectedChange;
+
+    // Calculate expected profit percentage for long and short positions
+    const profitLong = ((predictedValue - currentValue) / currentValue) * 100;
+    const profitShort = ((currentValue - predictedValue) / currentValue) * 100;
+
+    document.getElementById("profit-long").textContent =
+      profitLong.toFixed(2) + "%";
+    document.getElementById("profit-short").textContent =
+      profitShort.toFixed(2) + "%";
+  } else {
+    document.getElementById("predicted-value").textContent =
+      "Prediction not available";
+    document.getElementById("expected-change").textContent = "-";
+    document.getElementById("profit-long").textContent = "-";
+    document.getElementById("profit-short").textContent = "-";
+  }
 }
 
 // Event listener for loading the tickers when the page loads

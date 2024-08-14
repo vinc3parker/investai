@@ -1,0 +1,20 @@
+/* Styling for the time range buttons */
+.time-range-btns {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.time-range-btns button {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+.time-range-btns button:hover {
+    background-color: #45a049;
+}

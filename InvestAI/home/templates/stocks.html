@@ -18,18 +18,15 @@
         <select id="ticker-select">
             <option value="">Select a ticker</option>
         </select>
-        
-        <!-- Time range selection buttons -->
-        <div class="time-range-btns">
-            <button onclick="updateChartWithRange('1m')">Last Month</button>
-            <button onclick="updateChartWithRange('3m')">Last 3 Months</button>
-            <button onclick="updateChartWithRange('6m')">Last 6 Months</button>
-            <button onclick="updateChartWithRange('1y')">Last Year</button>
-            <button onclick="updateChartWithRange('all')">All Time</button>
-        </div>
-
-        <div style="width:1000px">
+        <div id="chart-container">
             <canvas id="chart"></canvas>
+        </div>
+        <div id="stock-info">
+            <p>Current Value: <span id="current-value"></span></p>
+            <p>Predicted Value: <span id="predicted-value"></span></p>
+            <p>Expected Change: <span id="expected-change"></span></p>
+            <p>Expected Profit Percentage (Long): <span id="profit-long"></span></p>
+            <p>Expected Profit Percentage (Short): <span id="profit-short"></span></p>
         </div>
     </div>
 {% endblock %}

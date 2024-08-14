@@ -3,15 +3,23 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f5f5f5;
+    overflow-x: hidden;
 }
 
 header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    transition: top 0.3s;
     background-color: #0096FF;
     color: white;
-    padding: 1em 0;
+    padding: 1em;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-sizing: border-box;
 }
 
 .header-container {
@@ -51,7 +59,7 @@ header {
 }
 
 main {
-    padding: 20px;
+    padding: 0px;
 }
 
 footer {
@@ -59,33 +67,46 @@ footer {
     color: white;
     text-align: center;
     padding: 1em 0;
-    position: absolute;
+    position: relative;
     bottom: 0;
     width: 100%;
 }
 
 /* Hero Banner */
 .hero-banner {
-    background-image: url('/static/images/hero-banner.jpg'); /* Placeholder for your banner image */
+    background-image: url('/static/images/hero-banner3.png'); /* Placeholder for your banner image */
     background-size: cover;
     background-position: center;
+    background-attachment: fixed;
     color: white;
-    padding: 100px 20px;
+    padding: 100px 0; /* Remove horizontal padding, keep vertical padding */
     text-align: center;
+    width: 100%; /* Full width of the viewport */
+    margin: 0; /* Remove any margin */
+    box-sizing: border-box; /* Ensure padding doesn't affect the width */
+}
+
+.hero-content {
+    max-width: 1200px; /* Optional: control the max width of the content inside */
+    margin: 0 auto; /* Center the content inside the hero banner */
+    padding: 0 20px; /* Optional: add padding to the content itself */
 }
 
 .hero-content h1 {
     font-size: 48px;
     margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 .hero-content p {
     font-size: 24px;
     margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
+
 .cta-button {
-    background-color: #ff6600;
+    background-color: #0096FF;
     color: white;
     padding: 10px 20px;
     border-radius: 5px;
@@ -94,7 +115,7 @@ footer {
 }
 
 .cta-button:hover {
-    background-color: #cc5200;
+    background-color: #015897;
 }
 
 /* About Section */
@@ -149,7 +170,7 @@ footer {
 
 /* CTA Section */
 .cta-section {
-    background-color: #ff6600;
+    background-color: #0096FF;
     color: white;
     padding: 50px 20px;
     text-align: center;
@@ -167,9 +188,75 @@ footer {
 
 .cta-section .cta-button {
     background-color: white;
-    color: #ff6600;
+    color: #00538f;
 }
 
 .cta-section .cta-button:hover {
     background-color: #f2f2f2;
+}
+
+/* Styling for the ticker select dropdown */
+#ticker-select {
+    width: 200px;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.investment-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.investment-summary, .investment-details {
+    margin-bottom: 20px;
+}
+
+.performance-graph {
+    width: 100%;
+    height: 300px;
+    margin-bottom: 20px;
+}
+
+.portfolio-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.portfolio-table th, .portfolio-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.portfolio-table th {
+    background-color: #343a40;
+    color: white;
+}
+
+.portfolio-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+h2, h3, h4 {
+    color: #343a40;
+    margin-bottom: 10px;
+}
+
+ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+ul li {
+    margin-bottom: 10px;
 }

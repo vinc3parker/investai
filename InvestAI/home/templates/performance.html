@@ -1,8 +1,99 @@
 {% extends 'base.html' %}
 
-{% block title %}Investment Performance{% endblock %}
+{% block title %}Future of InvestAI{% endblock %}
 
 {% block content %}
-    <h2>Investment Performance</h2>
-    <p>Details about investment performance.</p>
+<div class="investment-container">
+    <h2>The Future of InvestAI</h2>
+    <p>At InvestAI, our goal is to revolutionize the way individuals manage their investments by leveraging the power of artificial intelligence. Our platform aims to provide users with intelligent, data-driven insights and automated investment strategies that maximize returns and minimize risks.</p>
+
+    <h3>Our Vision</h3>
+    <ul>
+        <li><strong>AI-Powered Portfolio Management:</strong> Automate your investments with cutting-edge AI algorithms that adapt to market conditions in real-time.</li>
+        <li><strong>Personalized Investment Strategies:</strong> Tailor investment strategies to meet your unique financial goals and risk tolerance.</li>
+        <li><strong>Real-Time Market Analysis:</strong> Receive instant updates and recommendations based on the latest market data and trends.</li>
+        <li><strong>User-Friendly Interface:</strong> Access your portfolio and insights through an intuitive, easy-to-use interface that simplifies investment management.</li>
+    </ul>
+
+    <h3>What It Could Look Like</h3>
+    <p>Below is a mockup of what the investment performance dashboard could look like. This is just a glimpse of the powerful tools and insights that will be available to our users.</p>
+
+    <div class="investment-summary">
+        <h4>Overall Portfolio Performance</h4>
+        <div class="performance-graph">
+            <canvas id="performanceChart"></canvas>
+        </div>
+    </div>
+
+    <div class="investment-details">
+        <h4>Portfolio Summary</h4>
+        <table class="portfolio-table">
+            <thead>
+                <tr>
+                    <th>Stock Ticker</th>
+                    <th>Investment Amount</th>
+                    <th>Current Value</th>
+                    <th>Profit/Loss</th>
+                    <th>Change (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>AAPL</td>
+                    <td>$10,000</td>
+                    <td>$12,500</td>
+                    <td>$2,500</td>
+                    <td>+25%</td>
+                </tr>
+                <tr>
+                    <td>GOOGL</td>
+                    <td>$8,000</td>
+                    <td>$7,800</td>
+                    <td>-$200</td>
+                    <td>-2.5%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>Stay Tuned</h3>
+    <p>We're working tirelessly to bring these features to life. Stay tuned for more updates as we continue to develop InvestAI into the ultimate investment platform.</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Example data for the performance chart
+    const labels = ['January', 'February', 'March', 'April', 'May', 'June'];
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'Portfolio Value',
+            data: [10000, 10500, 11000, 12000, 11500, 12500],
+            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            fill: true,
+            tension: 0.3
+        }]
+    };
+    
+    const config = {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            },
+        },
+    };
+
+    const performanceChart = new Chart(
+        document.getElementById('performanceChart'),
+        config
+    );
+</script>
 {% endblock %}
